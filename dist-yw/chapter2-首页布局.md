@@ -66,7 +66,7 @@ Component （在 `/components/` 目录下） 通常是纯组件，是通过父�
 
 将 `MainLayout` 作为 `Route Component` 。
 
-## 3. 定义Mdoel
+## 3. 定义Model
 
 > dva 通过 model 的概念把一个领域的模型管理起来，包含同步更新 state 的 reducers，处理异步逻辑的 effects，订阅数据源的 subscriptions 。
 > 通俗的说，reducers 用来处理数据， effects 用来接收数据， subscriptions 用来监听数据。
@@ -125,6 +125,7 @@ function Header({ pathname, user, siderFold, switchSider, logout }) {
   return (
     <div className={styles.header}>
       <div className={styles.button} onClick= {switchSider}>
+        //引入classnames，当 siderFold 为 true 时选择 'menu-unfold' 样式图标，否则选择'menu-fold'样式图标
         <Icon type={classnames({'menu-unfold':siderFold, 'menu-fold':!siderFold})} />
       </div>
       <div className={styles.userInfo}>
@@ -404,6 +405,7 @@ export default class Chart extends Component {
 }
 
 ```
+注： `Chart` 组件需要使用生命周期方法，故使用 ES6 写法（extends Component）创建组件。
 
 新增 `routes/HomePage.js` ：
 

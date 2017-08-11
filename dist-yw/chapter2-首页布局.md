@@ -353,7 +353,7 @@ function RouterConfig({ history }) {
 }
 export default RouterConfig;
 ```
-将路径修改为 `path="/"`，浏览器（[http://localhost:8080/](http://localhost:8080/)）自动刷新，如果页面展示为以下效果，则首页创建成功啦。
+将路径修改为 `path="/"`，浏览器（[http://localhost:8000/](http://localhost:8000/)）自动刷新，如果页面展示为以下效果，则首页创建成功啦。
 ![](http://i.imgur.com/nMZpytG.png)
 
 注：

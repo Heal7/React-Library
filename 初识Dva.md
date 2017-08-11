@@ -137,7 +137,7 @@ export default PreviewQRCodeBar;
 import React, { PropTypes } from 'react';
 
 // 组件无 state，pure function
-const HelloMessage = ({ name }) =>{ // 箭头函数，结构赋值
+const HelloMessage = ({ name }) =>{ // 箭头函数，解构赋值
   <h1>Hello, {name}! </h1>
 }
 	
@@ -487,6 +487,7 @@ export default connect(mapStateToProps)(App);
 > 这里的路由通常指的是前端路由，由于我们的应用现在通常是单页应用，所以需要前端代码来控制路由逻辑，通过浏览器提供的 History API 可以监听浏览器url的变化，从而控制路由相关操作。
 
 dva 实例提供了 router 方法来控制路由，使用的是 [react-router](https://github.com/ReactTraining/react-router "react-router") 。
+
 
 `router.js` ：
 

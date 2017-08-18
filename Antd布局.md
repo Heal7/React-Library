@@ -182,7 +182,9 @@ export default RouterConfig;
 
 注：
 1. `history` 监听浏览器地址栏的变化，并解析这个 `URL` 转化为 `location` 对象，然后 `router` 使用它匹配到路由，最后正确地渲染相应的组件。 
-2. `IndexRoute` 表示默认路由，当用户访问 `'/'` 时，默认展示 `QuestionPage` 组件。
+2. `Router` 本身只是一个容器，真正的路由要通过 `Route` 组件定义，`Route` 组件定义了 URL 路径与组件的对应关系。比如用户访问 `/` 时，加载 `IndexPage` 组件。
+3. 路由嵌套：比如用户访问 `/table` 时，会先加载 `IndexPage` 组件，然后在它的内部加载 `Table` 组件。
+2. `IndexRoute` 表示默认路由，当用户访问 `'/'` 时，默认展示 `QuestionPage` 组件，注意 `IndexRoute` 组件没有路径参数 `path`。
 
 最后给左侧菜单加上点击切换路由效果，也就是 `Link` 标签，修改 `Sider.js` ：
 ```javascript

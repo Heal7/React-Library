@@ -2,5 +2,3 @@
 
 
 React技术库
-
-By Heal7

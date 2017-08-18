@@ -14,20 +14,23 @@
 
 ```
 ├── assets
-│ └── icon.png
 │ └── logo.png
 ├── components
+│ └── base            # 基础组件
+│ └── login           # 登录页面相关组件
+│ └── organizaiton    # 组织机构页面相关组件    
+│ └── role            # 角色页面相关组件
+│ └── user            # 用户页面相关组件
 ├── framework
-│ └── Header.js       #顶部导航栏
-│ └── MainLayout.css  #首页样式
-│ └── MainLayout.js   #主界面
-│ └── Sider.js        #侧边栏
+│ └── Header.js       # 顶部导航栏
+│ └── MainLayout.css  # 首页样式
+│ └── MainLayout.js   # 整体布局组件
+│ └── Sider.js        # 侧边菜单栏
 ├── models
 │ └── home.js
 ├── routes
 │ └── HomePage.js
 ├── services
-│ └── login.js
 ├── utils
 │ └── config.js
 │ └── constants.js
@@ -71,7 +74,11 @@ Component （在 `/components/` 目录下） 通常是纯组件，是通过父�
 > dva 通过 model 的概念把一个领域的模型管理起来，包含同步更新 state 的 reducers，处理异步逻辑的 effects，订阅数据源的 subscriptions 。
 > 通俗的说，reducers 用来处理数据， effects 用来接收数据， subscriptions 用来监听数据。
 
-这个页面涉及的 `state` 包括 user（已登录用户）/ siderFold（侧边栏是否折叠）/ darkTheme （侧边栏是否为 dark 主题），`reducers` 包括改变 siderFold / darkTheme 状态，异步任务 `effects` 包括退出登录事件。
+这个页面涉及的 `state` 包括 user（已登录用户）/ siderFold（侧边栏是否折叠）/ darkTheme （侧边栏是否为 dark 主题）；
+
+`reducers` 包括改变 siderFold / darkTheme 状态 ，登录之后保存用户信息；
+
+异步任务 `effects` 包括退出登录事件。
 
 新增 model `models/home.js` ：
 
@@ -84,8 +91,9 @@ export default {
     darkTheme: false
   },
   reducers: {
-    switchSider(state) {},
-    switchTheme(state) {},
+    switchSider() {},
+    switchTheme() {},
+    addUser() {}
   },
   effects: {
     *logout() {}
@@ -94,7 +102,8 @@ export default {
 ```
 
 注：
-1. 方法前面的 `*` 号，dva 是基于  [redux-saga](https://github.com/redux-saga/redux-saga)  的封装，用来表示这个方法是异步用法，相当于 `async/awai` t中的 `async` 。
+1. 方法前面的 `*` 号，dva 是基于  [redux-saga](https://github.com/redux-saga/redux-saga)  的封装，用来表示这个方法是异步用法，相当于 `async/await` 中的 `async` 。
+2. 别忘了在 `index.js` 文件内添加： `app.model(require("./models/home"));`
 
 
 ## 4. 构造 Component
@@ -190,7 +199,7 @@ import { Icon, Switch, Menu, Tooltip } from 'antd';
 import { Link } from 'dva/router';
 import config from '../utils/config';
 import styles from './MainLayout.css';
-import logo from '../assets/icon.png';
+import logo from '../assets/logo.png';
 
 function Sider({ pathname, darkTheme, siderFold, changeTheme }) {
   return (
@@ -305,7 +314,7 @@ function mapStateToProps({home}) {
 export default connect(mapStateToProps)(MainLayout);
 ```
 注：
-1. 通过 props 传入 dispatch, home, location, children 给 MainLayout 组件，dispatch 在 connect 的时候绑定，用来触发 action ， home 是该 model 在全局 state 下的 key，children 指该组件的子组件。
+1. 通过 props 传入 dispatch / home / location / children 给 MainLayout 组件，dispatch 在 connect 的时候绑定，用来触发 action ， home 是该 model 在全局 state 下的 key，location 是组件对应的地址，children 指该组件的子组件。
 2. 对象字面量改进：如 `headerProps = {user, siderFold, pathname}`，解构赋值的反向操作，用于重新组织一个 Object 。
 3. react 原生添加多个 className 会报错，那引入 `classnames` 库 （`$ npm install classnames`），可以直接在 classnames 内部进行条件判断。
 
@@ -323,6 +332,7 @@ export default {
     switchTheme(state) {
       return {...state, darkTheme: !state.darkTheme}
     },
+    addUser(state, { payload }) {}
   },
   effects: {
     *logout({ payload }, { put,call }) {
@@ -330,7 +340,7 @@ export default {
   },
 };
 ```
-注：退出登录逻辑还未完成，这部分在创建登录页面时详细说明。
+注：“退出登录逻辑” 和 “保存用户信息” 还未完成，这部分在创建登录页面时详细说明。
 
 ## 7. 定义路由
 
@@ -373,7 +383,7 @@ Content 内容框可以放置内嵌在 MainLayout 页面里的组件。children 
 
 	$ yarn add echarts
 
-将每一个 Chart 封装成一个 Chart 基础组件，新增 `components/base/Chart.js` ：
+将每一个 Chart 单独封装成一个 Chart 基础组件，然后在 Route Component 中引用它，新增 `components/base/Chart.js` ：
 
 ```javascript
 import React, {Component} from 'react';
@@ -391,11 +401,26 @@ export default class Chart extends Component {
   //当组件构造成DOM元素且添加至页面之后，展示图表
   componentDidMount = () => {
     this.displayData();
+    window.addEventListener('resize', this._chartResize);// 窗口大小改变时改变图表大小
+  }
+  //组件更新之后渲染图表
+  componentDidUpdate = () => {
+    this.displayData();
+  }
+  //图表组件即将从页面删除时，移除监听图表大小改变事件
+  componentWillUnmount = () => {
+    window.removeEventListener('resize', this._chartResize);
   }
   //获取真实的chart节点，在该节点内添加图表
   displayData() {
     this.chart = echarts.init(this.refs.chart);
     this.chart.setOption(this.state.options);
+  }
+  //改变图表大小
+  _chartResize = () => {
+    if (this.chart) {
+      this.chart.resize();
+    }
   }
   render() {
     return (
@@ -405,7 +430,7 @@ export default class Chart extends Component {
 }
 
 ```
-注： `Chart` 组件需要使用生命周期方法，故使用 ES6 写法（extends Component）创建组件。
+注： `Chart` 组件需要使用生命周期方法，故使用 ES6 写法（`class ComponentName extends Component`）创建组件。
 
 新增 `routes/HomePage.js` ：
 
@@ -454,6 +479,8 @@ export default HomePage;
 
 ### 8.2 OrganizationPage / RolePage / UserPage
 
+`OrganizationPage` ： 
+
 	$ dva g route OrganizationPage --no-css  
 	$ dva g model organization   
 	$ dva g component organization/OrganizationList --no-css
@@ -466,15 +493,31 @@ export default HomePage;
 `router.js` 修改为：
 ```javascript
 <Router history={history}>
-   <Route path="/" component={Mainlayout}>
-      <IndexRoute component={HomePage} />
-      <Route path="orgs" component={OrganizationPage} />
-      <Route path="roles" component={RolePage} />
-      <Route path="users" component={UserPage} />
-   </Route>
+  <Route path="/" component={Mainlayout}>
+    <IndexRoute component={HomePage} />
+    <Route path="orgs" component={OrganizationPage} />
+    <Route path="roles" component={RolePage} />
+    <Route path="users" component={UserPage} />
+  </Route>
 </Router>
 ```
+通过上面的配置，这个应用知道该如何渲染下面四个 `URL` ：
+
+| URL | component |
+| ------| ------ | 
+| / | APP -> HomePage |
+| /orgs | APP -> OrganizationPage |
+| /roles | APP -> RolePage |
+| /users | APP -> UserPage |
+
+
+注：
+1. `history` 监听浏览器地址栏的变化，并解析这个 `URL` 转化为 `location` 对象，然后 `router` 使用它匹配到路由，最后正确地渲染相应的组件。 
+2. `IndexRoute` 表示默认路由，当用户访问 `'/'` 时，默认展示 `HomePage` 组件。
+
+
 最后效果：
+
 **首页 HomePage :**
 ![](http://i.imgur.com/jOF8fNp.png)
 
@@ -484,9 +527,11 @@ export default HomePage;
 
 ## 下一步
 
-首页布局到此就完成了，下一步开始构建子组件了，准备好了吗？
+首页布局到此就基本完成了，下一步开始构建登录页面，与服务器交互实现登录。
 
 以上。
+
+
 
 
 

@@ -149,7 +149,31 @@ export default {
 ```
 由于以上数据会经常被使用，所以我们设置成常数，后面需要可以直接引用。
 
-## 6. 手脚架代码自动生成
+## 6. 安装其他依赖
+
+1. `dva-loading` 插件： 自动处理 loading 状态；
+
+		$ npm install dva-loading
+
+修改 `index.js` 加载插件：
+
+```javascript
++ import createLoading from 'dva-loading';
++ app.use(createLoading());
+```
+
+2. `echarts` ： 使用 echarts 绘制图表；
+		
+		$ npm install echarts
+
+3. `promise-polyfill` 
+
+		$ npm install promise-polyfill
+
+
+## 7. 手脚架代码自动生成
+
+比如生成 LoginPage 页面的 route / model / component ：
 	
 	$ dva g route LoginPage  #有js和css文件
 	$ dva g model Login  #仅js文件

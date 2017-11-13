@@ -1,0 +1,19 @@
+.loginForm {
+  max-width: 300px;
+  max-height: 240px;
+  margin: auto;
+  position: absolute;
+  left: 0; 
+  right: 0; 
+  top: 0; 
+  bottom: 0;
+}
+.loginTitle{
+  padding: 0px 0px 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+.loginFormButton {
+  width: 100%;
+}

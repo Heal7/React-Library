@@ -1,0 +1,49 @@
+.BaseLayout{
+    height:100%;
+}
+.Logo {
+  width: 140px;
+  height: 31px;
+  background-image:url(../assets/logo.png);
+  margin: 16px 8px 16px 0;
+  float: left;
+}
+.UserInfo{
+    width: 80px;
+    height: 64px;
+    float: right;
+    line-height: 64px;
+    text-align: center;
+}
+.FeatureBar{
+    background-color: white;
+}
+.ActiveFeature{
+    font-weight: bold;
+    color: #49a9ee !important;
+}
+[class~=ant-layout-sider-collapsed] span{
+    display: none;
+}
+[class~=ant-layout-sider-collapsed] i{
+  font-size: 16px;
+}
+.MainContent{
+    background-color: white;
+    padding: 10px;
+    margin: 0px;
+    min-height: 280px;
+	overflow-y: auto;
+}
+.Footer{
+    width:100%;
+    text-align:center;
+    padding:10px 0px;
+}
+.About{
+    padding:10px;
+    min-width: 350px;
+}
+.About > li{
+    line-height: 22px;
+}
